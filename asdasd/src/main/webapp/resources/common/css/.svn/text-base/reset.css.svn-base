@@ -1,0 +1,42 @@
+/************************************/
+/*	Name: Project Name
+/*	PART: CSS Reset
+/*	Version: 1.0
+/*	Author: 작성자
+/************************************/
+
+/* reset */
+html, body, address, blockquote, form, div, p, pre, span,  h1, h2, h3, h4, h5, h6, dl, dd, dt, ol, ul, li, table, thead, tbody, tfoot, tr, th, td, img, button, del, ins, map, object, a, abbr, acronym, b, bdo, big, br, cite, code, dfn, em, i, img, kbd, q, samp, small, span, strong, sub, sup, tt, var, legend, fieldset, u, center, label, caption, iframe, s, applet, strike, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video, input {margin:0; padding:0; font-size:100%;}
+
+html, body {line-height:1.5;}
+html, body, #wrap {height:100%;}
+body {font:normal 12px/1 Dotum, "Verdana", Gulim, Tahoma, Verdana, UnDotum, sans-serif; color:#5e5e5e; word-break:break-word;}
+
+ul, ol, dl {list-style:none;}
+table {border-collapse:collapse; border-spacing:0;}
+img {border:0; vertical-align:middle;}
+input, select {vertical-align:baseline; color:#5e5e5e;}
+textarea {border:1px solid #cdcdd3;}
+select {border:1px solid #9093a3; height:22px; line-height:22px;}
+legend, caption {position:absolute; top:0; left:0; width:0; height:0; overflow:hidden; visibility:hidden; font-size:0; line-height:0;}
+
+a {text-decoration:none; color:#666666; vertical-align:baseline;}
+a:link, a:active, a:visited, a:hover {color:#5e5e5e;}
+
+hr {display:block; height:1px; border:0; border-top:1px solid #cccccc; margin:1em 0; padding:0;}
+h1,h2,h3,h4,h5,h6 {font-size:100%; font-weight:normal;}
+caption, th, td {text-align:left; font-weight:normal;}
+address, caption, cite, code, dfn, em, strong, th, var {font-style:normal; font-weight:normal;}
+
+.clearfix:after {content:""; display:block; clear:both;}
+.old .clearfix {zoom:1;} /* ie 전용 비표준 속성*/
+
+
+blockquote, q {quotes:none;}
+blockquote:before, blockquote:after, q:before, q:after {content:''; content:none;}
+
+
+/*스크롤 스타일*/
+html{scrollbar-3dlight-color:#FFFFFF; scrollbar-arrow-color:#989898; scrollbar-base-color:#FFFFFF; scrollbar-face-color:#FFFFFF; scrollbar-highlight-color:#E8E8E8; scrollbar-shadow-color:#E8E8E8; scrollbar-darkshadow-color:#E8E8E8;}
+
+

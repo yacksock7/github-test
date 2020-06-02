@@ -1,0 +1,39 @@
+/************* 분류 */
+
+#wrap {position:relative; width:100%;}
+
+#header {position:absolute; z-index:1; left:0; top:0; width:100%; height:47px; background:url(../../images/gnb/gnb_bg.gif) repeat-x left top;}
+
+#header .gnb {position:relative; width:1030px;}
+#header .gnb .logo {float:left; width:180px; padding-top:12px; text-align:center;}
+#header .gnb .nav {float:left; width:850px; height:47px; line-height:47px; text-align:center;}
+#header .gnb .nav li {float:left; padding:1px 18px; 0}
+#header .gnb .nav li.ov { background:url(../../images/gnb/nav_bg_ov.gif) repeat-x left top;}
+#header .gnb .nav li a {font-size:14px; font-weight:bold; color:#fff;}
+
+#container {position:relative; width:99%; height:100%; display:inline-block;}
+#pop_container {position:relative; width:99%; height:100%; display:inline-block;}
+
+#snb {position:relative; float:left; width:15%; min-height:100%; border-right:1px solid #9093a3; background:#dedfe4;}
+#snb h2 {margin-top:47px; height:60px; background:#de2519;}
+#snb h2 img {padding:21px 0 0 20px;}
+#snb .sub_menu {border-top:1px solid #bcc3d1;}
+#snb .sub_menu li {}
+#snb .sub_menu li a {display:block; height:34px; line-height:34px; padding-left:19px; border-top:1px solid #FFF; border-bottom:1px solid #bcc3d1; font-size:14px; font-weight:bold; color:#393840;}
+#snb .sub_menu li.ov a {color:#e3281b; background:#f4f4f6;}
+
+
+#snb .thi_menu {border-top:1px solid #bcc3d1;}
+#snb .thi_menu li {}
+#snb .thi_menu li a {display:block; height:34px; line-height:34px; padding-left:19px; border-top:1px solid #FFF; border-bottom:1px solid #bcc3d1; font-size:12px; font-weight:bold; color:#393840;}
+#snb .thi_menu li.ov a {color:#e3281b; background:#f4f4f6;}
+
+#contents {float:left; width:81%; min-height:100%;}
+#contents .contnets_body {position:relative; margin-top:47px; padding:36px 0 0 30px; margin-bottom:50px;}
+#contents h3 {margin-bottom:20px; font-size:24px; font-weight:bold; color:#e3281b; letter-spacing:-0.1em;}
+
+#pop_contents {float:left; width:95%; min-height:100%;}
+#pop_contents .contnets_body {position:relative; margin-top:17px; padding:16px 0 0 30px; margin-bottom:50px;}
+#pop_contents h3 {margin-bottom:20px; font-size:14px; font-weight:bold; color:#e3281b; letter-spacing:-0.1em;}
+
+#footer {position:relative; clear:both; zdisplay:none; border:2px solid blue;}

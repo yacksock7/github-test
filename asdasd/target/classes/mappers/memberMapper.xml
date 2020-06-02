@@ -1,0 +1,972 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.example.mapper.memberMapper">
+       
+
+	<!-- Custom///////////////////////////////////////////////////////////// -->
+	
+	<!-- Reseller/Custom Select All -->
+	 <select id="PagingCountCustom"  parameterType="map" resultType="int">
+	  SELECT count(*) from test01.customer 
+     	WHERE customer_id is not NULL
+     
+    	 <if test='user_id != null and user_id != ""'>
+	     and manager_id = #{user_id}
+	     </if> 
+      <if test='customer_nm != null and customer_nm != ""'>
+      AND customer_nm  LIKE CONCAT('%', #{customer_nm}, '%') 
+      </if>
+      <if test='seller_id != null and seller_id != ""'>
+      AND manager_id  = #{seller_id} 
+      </if> 
+    </select>
+	
+	
+	 <select id="selectCustomer"  parameterType="map" resultType="CustomVO">
+	 SELECT *, 
+     		(select manager from test01.office where office_id = D.manager_id) manager_nm
+     	
+     	FROM test01.customer D
+     	
+     	WHERE D.customer_id is not NULL
+     
+    	 <if test='user_id != null and user_id != ""'>
+	     and D.manager_id = #{user_id}
+	     </if> 
+      <if test='customer_nm != null and customer_nm != ""'>
+      AND D.customer_nm  LIKE CONCAT('%', #{customer_nm}, '%') 
+      </if>
+      <if test='seller_id != null and seller_id != ""'>
+      AND D.manager_id  = #{seller_id} 
+      </if> 
+      
+      <if test='pageNo != null and pageNo != ""'>
+         LIMIT #{pageView} 
+         OFFSET #{offSet}
+      </if> 
+    </select>
+	
+	
+	<insert id="insertCustomer" parameterType="map">
+		INSERT INTO `test01`.`customer`
+			(
+			`customer_nm`,
+			`tel_no`,
+			`email`,
+			`manager_id`,
+			`reg_id`,
+			`reg_dt`)
+			
+			VALUES
+			(
+			#{customer_nm},
+			#{tel_no},
+			#{email},
+			#{manager_id},
+			'',
+			now()
+			);
+	</insert>
+	
+	<update id="updateCustomer" parameterType="map">
+	
+      <if test='ud_flag == "U"'>
+         UPDATE customer   
+         SET 
+         customer_nm = #{customer_nm}
+         ,tel_no = #{tel_no}
+         ,email = #{email}
+         ,reg_id = #{reg_id}
+  
+         WHERE customer_id = #{customer_id}
+      </if>
+      
+      <if test='ud_flag == "D"'>      
+         DELETE FROM customer
+         WHERE customer_id = #{customer_id}         
+      </if>
+	</update>
+	
+	<select id="checkCustom" parameterType="int" 
+	resultType="CustomVO">
+		SELECT * FROM customDB WHERE phone=#{phone}
+	</select>
+	
+	<select id="getCustomDetail" parameterType="int" 
+	resultType="CustomVO">
+		SELECT * FROM customDB WHERE num=#{num}
+	</select>
+	
+	<delete id="deleteCustom" parameterType="int">
+		DELETE FROM customDB WHERE num=#{num}
+	</delete>
+	
+		<update id="updateCustom" 
+	parameterType="CustomVO">
+		UPDATE customDB SET name=#{name}, phone=#{phone}, email=#{email} 
+			WHERE num=#{num}
+	</update>
+	
+	
+	
+	<!-- Reseller/////////////////////////////////////////////////////////////// -->
+	<!-- Reseller/Custom Select All -->
+	
+	<select id="PagingCountReseller"  parameterType="map" resultType="int">
+     select count(*) from test01.office where user_group = '2'
+      <if test='seller_nm != null and seller_nm != ""'>
+      AND manager  LIKE CONCAT('%', #{seller_nm}, '%') 
+      </if>
+      
+    </select>
+	
+	 <select id="selectReseller"  parameterType="map" resultType="UserVO">
+     select * from test01.office where user_group = '2'
+      <if test='seller_nm != null and seller_nm != ""'>
+      AND manager  LIKE CONCAT('%', #{seller_nm}, '%') 
+      </if>
+      
+      <if test='pageNo != null and pageNo != ""'>
+         LIMIT #{pageView} 
+         OFFSET #{offSet}
+      </if>
+    </select>
+    
+	<insert id="insertReseller" parameterType="map">
+		INSERT INTO `test01`.`seller`
+			(
+			`seller_nm`,
+			`phone_no`,
+			`email`,
+			`company_nm`,
+			`reg_id`,
+			`reg_dt`)
+			
+			VALUES
+			(
+			#{seller_nm},
+			#{phone_no},
+			#{email},
+			#{company_nm},
+			'',
+			now()
+			);
+	</insert>
+	
+		<select id="selectOneReseller" parameterType="map" resultType="UserVO">
+			select * from test01.office where office_id = #{office_id}
+		</select>
+	
+
+	
+<!-- Deal/////////////////////////////////////////////////////////////// -->
+	<select id="checkDeal" parameterType="map" 
+	resultType="DealVO">
+		
+		SELECT *,
+		    (select customer_nm from test01.customer where customer_id= D.customer_id) as customer_nm
+		    ,(select manager from test01.office where office_id= D.seller_id) as seller_nm
+		    ,Y.goods_nm, status
+		FROM  test01.deal D
+		LEFT OUTER JOIN
+      (
+         SELECT * from test01.goods
+      ) Y
+
+	    on Y.goods_no = D.goods_no
+  
+		WHERE D.deal_no is not NULL
+
+	  <if test='fr_wb_dt != null and fr_wb_dt != ""'>
+         and (DATE(D.deal_dt) BETWEEN #{fr_wb_dt} and #{to_wb_dt})
+      </if>
+
+      <if test='seller_id != null and seller_id != ""'>
+         AND D.seller_id = #{seller_id}
+      </if>
+
+      <if test='customer_id != null and customer_id != ""'>
+         AND D.customer_id = #{customer_id}
+      </if>
+       
+      <if test='goods_nm != null and goods_nm != ""'>
+      AND Y.goods_nm  LIKE CONCAT('%', #{goods_nm}, '%') 
+      </if>
+      
+      order by deal_dt desc 
+      
+      <if test='pageNo != null and pageNo != ""'>
+         LIMIT #{pageView} 
+         OFFSET #{offSet}
+      </if>
+	</select>	
+		
+	<insert id="insertDeal" parameterType="map" >
+		INSERT INTO `test01`.`deal`
+			(
+			`seller_id`,
+			`goods_no`,
+			`deal_qty`,
+			`deal_price`,
+			`deal_dt`,
+			`memo`,
+			`status`,
+			 <if test='customer_id != null and customer_id != ""'>
+			 `customer_id`,
+			 </if>
+			`reg_id`,
+			`reg_dt`,
+			`mod_id`,
+			`mod_dt`,
+			`deal_status`
+			)
+			
+			VALUES
+			
+			(
+			#{seller_id},
+			#{goods_no},
+			#{deal_qty},
+			#{deal_price},
+			#{deal_dt},
+			#{memo},
+			#{status},
+			 <if test='customer_id != null and customer_id != ""'>
+			 #{customer_id},
+			 </if>
+			'',
+			now(),
+			'',
+			now(),
+			#{deal_status}
+			);
+	</insert>
+	
+	<update id="updateDeal" parameterType="map">
+	
+      <if test='ud_flag == "U"'>
+         UPDATE deal   
+         SET 
+         
+		<if test='customer_id != null and customer_id != ""'>
+		 `customer_id` = #{customer_id},
+		</if>
+         seller_id = #{seller_id}
+         ,goods_no = #{goods_no}
+         ,deal_qty = #{deal_qty}
+         ,deal_price = #{deal_price}
+         ,deal_dt = #{deal_dt}
+         ,memo = #{memo}
+         ,status = #{status}
+         ,MOD_ID = #{mod_id}
+         ,MOD_DT = now()
+         ,deal_status = #{deal_status}
+         WHERE deal_no = #{deal_no}
+      </if>
+      
+      <if test='ud_flag == "D"'>      
+         DELETE FROM deal   
+         WHERE deal_no = #{deal_no}         
+      </if>
+	</update>
+	
+	
+	
+	<!-- Goods/////////////////////////////////////////////////////////////// -->
+	<select id="PagingCountGoods" parameterType="map" resultType="int">
+		select count(*)
+			from  test01.goods G       
+			WHERE goods_nm is not NULL
+		      <if test='goods_nm != null and goods_nm != ""'>
+		      AND goods_nm  LIKE CONCAT('%', #{goods_nm}, '%') 
+		      </if>
+		</select>
+		
+	
+     <select id="selectGoods" resultType="GoodsVO">
+			select *
+			, (select goods_qty from test01.stock where goods_no = G.goods_no and location_id=#{location_id}) goods_qty
+			
+			
+			from  test01.goods G       
+
+
+			WHERE goods_nm is not NULL
+       
+		      <if test='goods_nm != null and goods_nm != ""'>
+		      AND goods_nm  LIKE CONCAT('%', #{goods_nm}, '%') 
+		      </if>
+      
+		      
+		      <if test='pageNo != null and pageNo != ""'>
+		         LIMIT 10
+		         OFFSET #{offSet}
+		      </if>
+    </select>
+    
+    <insert id="insertGoods" parameterType="map" >
+		INSERT INTO `test01`.`goods`
+			(
+			`goods_nm`
+			,`unit_price`
+			,`sale_price`
+			,`make_company`
+			,`reg_id`
+			,`reg_dt`
+			,`goods_status`
+			<if test='img_path != null or img_path != ""'>
+		 	,`img_path` 	
+		 	</if>
+			<if test='goods_spac != null or goods_spac != ""'>
+		 	,`goods_spac` 	
+		 	</if>
+			<if test='goods_URL != null or goods_URL != ""'>
+		 	,`goods_URL` 	
+		 	</if>
+			)
+			
+			VALUES
+			(
+			#{goods_nm}
+			,#{unit_price}
+			,#{sale_price}
+			,#{make_company}
+			,''
+			,now()
+			,#{goods_status}
+			<if test='img_path != null or img_path != ""'>
+			,#{img_path}	
+		 	</if>
+			<if test='goods_spac != null or goods_spac != ""'>
+			,#{goods_spac}	
+		 	</if>
+			<if test='goods_URL != null or goods_URL != ""'>
+			,#{goods_URL}	
+		 	</if>
+			);
+			
+		    <selectKey keyProperty="goods_no" resultType="string" order="AFTER">
+       				SELECT MAX(goods_no) as goods_no FROM `test01`.`goods`
+       		</selectKey>
+	</insert>
+	
+	<update id="updateGoods" parameterType="map">
+	
+      <if test='ud_flag == "U"'>
+         UPDATE goods   
+         SET 
+         goods_nm = #{goods_nm}
+         ,unit_price = #{unit_price}
+         ,sale_price = #{sale_price}
+         ,make_company = #{make_company}
+         ,goods_status = #{goods_status}
+         <if test='img_path != NULL or img_path != ""'>
+  		 ,img_path = #{img_path}
+  		 </if>
+		 <if test='goods_spac != null or goods_spac != ""'>
+		 , goods_spac = #{goods_spac}	
+		 </if>
+		 <if test='goods_URL != null or goods_URL != ""'>
+		 , goods_URL = #{goods_URL}	
+		 </if>
+  		 
+         WHERE goods_no = #{goods_no}
+      </if>
+      
+      <if test='ud_flag == "D"'>      
+         DELETE FROM goods   
+         WHERE goods_no = #{goods_no}         
+      </if>
+	</update>
+	
+	<!-- Notice///////////////////////// -->
+	<select id="PagingCountNotice"  parameterType="map" resultType="int">
+     SELECT count(*) FROM notice WHERE notice_no is not NULL
+     		<if test='fr_wb_dt != null and fr_wb_dt != ""'>
+    		     and (DATE(notice_dt) BETWEEN #{fr_wb_dt} and #{to_wb_dt}) 
+      		</if>
+		    <if test='notice_title != null and notice_title != ""'>
+			      AND notice_title  LIKE CONCAT('%', #{notice_title}, '%') 
+			</if>
+		  
+    </select>
+	
+	<select id="selectNotice"  parameterType="map" resultType="NoticeVO">
+     SELECT * FROM notice WHERE notice_no is not NULL
+     		<if test='fr_wb_dt != null and fr_wb_dt != ""'>
+    		     and (DATE(notice_dt) BETWEEN #{fr_wb_dt} and #{to_wb_dt}) 
+      		</if>
+		    <if test='notice_title != null and notice_title != ""'>
+			      AND notice_title  LIKE CONCAT('%', #{notice_title}, '%') 
+			</if>
+		    <if test='pageNo != null and pageNo != ""'>
+		         LIMIT #{pageView} 
+		         OFFSET #{offSet}
+		    </if>
+    </select>
+	
+	<insert id="insertNotice" parameterType="map">
+		INSERT INTO `test01`.`notice`
+			(
+			`notice_title`,
+			`notice_content`,
+			`notice_dt`,
+			`manager_nm`
+			)
+			
+			VALUES
+			(
+			#{notice_title},
+			#{notice_content},
+			now(),
+			#{manager_nm}
+			);
+	</insert>
+	
+	<update id="updateNotice" parameterType="map">
+	
+      <if test='ud_flag == "U"'>
+         UPDATE notice  
+         SET 
+         notice_title = #{notice_title}
+         ,notice_content = #{notice_content}
+  		 
+         WHERE notice_no = #{notice_no}
+      </if>
+      
+      <if test='ud_flag == "D"'>      
+         DELETE FROM notice   
+         WHERE notice_no = #{notice_no}         
+      </if>
+	</update>
+	
+	<!-- schedule///////////////////////// selectOneSchedule-->
+	
+	<select id="selectScheduleGoods" parameterType="map" resultType="SGVO">
+		select *,
+		 (select goods_nm from test01.goods where goods_no = D.goods_no) as goods_nm
+		
+		 from test01.schedule_goods D
+		 
+		 where schedule_no = #{schedule_no}
+	</select>
+	
+	<select id="selectOneSchedule" parameterType="map" resultType="ScheduleVO">
+		select * from test01.schedule where schedule_no = #{schedule_no}
+	</select>
+	
+		<select id="PagingCountSchedule"  parameterType="map" resultType="int">
+		SELECT count(*)
+		FROM  test01.schedule 
+		WHERE schedule_no is not NULL
+		
+	     <if test='user_id != null and user_id != ""'>
+	    	AND reseller_id = #{user_id}
+	     </if>
+	     <if test='seller_id != null and seller_id != ""'>
+	    	AND reseller_id = #{seller_id}
+	     </if>
+    		<if test='fr_wb_dt != null and fr_wb_dt != ""'>
+    		     and (DATE(schedule_dt) BETWEEN #{fr_wb_dt} and #{to_wb_dt})
+      		</if>
+		    <if test='customer_id != null and customer_id != ""'>
+			      AND customer_id  LIKE CONCAT('%', #{customer_id}, '%') 
+			</if>
+			 <if test='s_status != null and s_status != ""'>
+			      AND status  LIKE CONCAT('%', #{s_status}, '%') 
+			</if>
+    </select>
+	
+	
+	<select id="selectSchedule"  parameterType="map" resultType="ScheduleVO">
+		SELECT *,
+		    (select manager from test01.office where office_id= D.reseller_id) as reseller_nm
+		    ,(select customer_nm from test01.customer where customer_id= D.customer_id) as customer_nm
+		 
+		FROM  test01.schedule D
+		WHERE schedule_no is not NULL
+		
+	     <if test='user_id != null and user_id != ""'>
+	    	AND D.reseller_id = #{user_id}
+	     </if>
+	     <if test='seller_id != null and seller_id != ""'>
+	    	AND D.reseller_id = #{seller_id}
+	     </if>
+    		<if test='fr_wb_dt != null and fr_wb_dt != ""'>
+    		     and (DATE(D.schedule_dt) BETWEEN #{fr_wb_dt} and #{to_wb_dt})
+      		</if>
+		    <if test='customer_id != null and customer_id != ""'>
+			      AND D.customer_id  LIKE CONCAT('%', #{customer_id}, '%') 
+			</if>
+			 <if test='s_status != null and s_status != ""'>
+			      AND D.status  LIKE CONCAT('%', #{s_status}, '%') 
+			</if>
+		    <if test='pageNo != null and pageNo != ""'>
+		         LIMIT #{pageView} 
+		         OFFSET #{offSet}
+		    </if>
+    </select>
+     
+  		 
+  <insert id="insertSchedule" parameterType="map" >
+      INSERT INTO `test01`.`schedule`(
+         `reseller_id`
+         ,`customer_id`
+         ,`schedule_dt`
+         ,`memo`
+         ,`status`
+         )
+         
+         VALUES(
+         #{reseller_id}
+         ,#{customer_id}
+         ,#{schedule_dt}
+         ,#{memo}
+         ,#{status}
+         );
+         
+         
+		    <selectKey keyProperty="schedule_no" resultType="string" order="AFTER">
+       				SELECT MAX(schedule_no) as schedule_no FROM `test01`.`schedule`
+       		</selectKey>
+   </insert>
+	
+	<update id="updateSchedule" parameterType="map">
+      <if test='ud_flag == "U"'>
+         UPDATE schedule   
+         SET 
+         	reseller_id = #{reseller_id}
+         ,customer_id = #{customer_id}
+         ,schedule_dt = #{schedule_dt}
+         ,memo = #{memo}
+         ,status = #{status}
+         
+         WHERE schedule_no = #{schedule_no}
+      </if>
+      
+      <if test='ud_flag == "D"'>      
+         DELETE FROM schedule   
+         WHERE schedule_no = #{schedule_no}         
+      </if>
+	</update>
+	
+	
+	
+	<!-- schedule_goods///////////////////////// -->
+	    <insert id="insertScheduleGoods" parameterType="map" >
+		INSERT INTO `test01`.`schedule_goods`(
+			`schedule_no`
+			,`goods_no`
+			,`goods_qty`
+			,`goods_price`
+			)
+			VALUES(
+			#{schedule_no}
+			,#{goods_no}
+			,#{goods_qty}
+			,#{goods_price}
+			);
+	</insert>
+ 	
+	<update id="updateScheduleGoods" parameterType="map">
+         DELETE FROM schedule_goods   
+         WHERE schedule_no = #{schedule_no} 
+	</update> 
+	
+	
+	<!-- Issue///////////////////////// -->
+		<select id="selectOneIssue" parameterType="map" resultType="IssueVO">
+			select * from test01.issue where issue_no = #{issue_no}
+		</select>
+
+		<select id="PagingCountIssue" parameterType="map" resultType="int">
+			 SELECT count(*)
+     		 from test01.issue D
+     		 
+			<if test='issue_tag != null and issue_tag != ""'>
+     		 join test01.issue_tag B 
+			 on D.issue_no = B.issue_no
+			</if>
+            
+			WHERE D.issue_no is not NULL
+			
+			<if test='category != null and category != ""'>
+				and issue_category = #{category}
+		    </if>
+			<if test='fr_wb_dt != null and fr_wb_dt != ""'>
+    		     and (DATE(D.issue_dt) BETWEEN #{fr_wb_dt} and #{to_wb_dt})
+      		</if>
+		    <if test='customer_id != null and customer_id != ""'>
+			      AND D.customer_id  LIKE CONCAT('%', #{customer_id}, '%') 
+			</if>
+			<if test='issue_tag != null and issue_tag != ""'>
+			      AND B.issue_tag = #{issue_tag} 
+			</if>
+			<if test='issue_title != null and issue_title != ""'>
+			      AND issue_title  LIKE CONCAT('%', #{issue_title}, '%') 
+			</if>
+		</select>
+		
+		<select id="selectIssue"  parameterType="map" resultType="IssueVO">
+    		 SELECT *,
+     		 (select manager from test01.office where office_id= D.reg_id) as reg_nm
+		    ,(select customer_nm from test01.customer where customer_id= D.customer_id) as customer_nm
+     
+     		 from test01.issue D
+     		 
+			<if test='issue_tag != null and issue_tag != ""'>
+			     
+     		 join test01.issue_tag B 
+			 on D.issue_no = B.issue_no
+			</if>
+            
+			WHERE D.issue_no is not NULL
+			
+			<if test='category != null and category != ""'>
+				and issue_category = #{category}
+		    </if>
+
+			<if test='fr_wb_dt != null and fr_wb_dt != ""'>
+    		     and (DATE(D.issue_dt) BETWEEN #{fr_wb_dt} and #{to_wb_dt})
+      		</if>
+		    <if test='customer_id != null and customer_id != ""'>
+			      AND D.customer_id  LIKE CONCAT('%', #{customer_id}, '%') 
+			</if>
+			<if test='issue_tag != null and issue_tag != ""'>
+			      AND B.issue_tag = #{issue_tag} 
+			</if>
+			<if test='issue_title != null and issue_title != ""'>
+			      AND issue_title  LIKE CONCAT('%', #{issue_title}, '%') 
+			</if>
+		    <if test='pageNo != null and pageNo != ""'>
+		         LIMIT #{pageView}
+		         OFFSET #{offSet}
+		    </if>
+    </select>
+		
+		<insert id="insertIssue" parameterType="map" >
+		INSERT INTO `test01`.`issue`(
+			`reg_id`
+			,`customer_id`
+			,`issue_title`
+			,`issue_msg`
+			,`issue_category`
+			,`issue_dt`
+			)
+			
+			VALUES(
+			#{reg_id}
+			,#{customer_id}
+			,#{issue_title}
+			,#{issue_msg}
+			,#{issue_category}
+			,now()
+			);
+			
+			 <selectKey keyProperty="issue_no" resultType="string" order="AFTER">
+       				SELECT MAX(issue_no)  as issue_no FROM `test01`.`issue`
+       		</selectKey>
+       		
+	</insert>
+	
+	<update id="updateIssue" parameterType="map">
+	
+      <if test='ud_flag == "U"'>
+         UPDATE issue
+         SET 
+         issue_title = #{issue_title}
+         ,issue_msg = #{issue_msg}
+         ,issue_feedback = #{issue_feedback}
+         
+         WHERE issue_no = #{issue_no}
+         	
+      </if>
+      
+      <if test='ud_flag == "D"'>      
+         DELETE FROM issue   
+         WHERE issue_no = #{issue_no}         
+      </if>
+	</update>
+	
+<!-- IssueTag -->
+	
+	<insert id="insertIssueTag" parameterType="map">
+	
+	INSERT INTO `test01`.`issue_tag`(
+			`issue_no`
+			,`issue_tag`
+			)
+			
+			VALUES(
+			#{issue_no}
+			,#{issue_tag}
+			);
+	</insert>
+	
+	<select id="selectIssueTag" parameterType="map" resultType="ITVO">
+			select * from test01.issue_tag where issue_no is not null 
+			
+			<if test='issue_no != null and issue_no != ""'>
+		    	and issue_no = #{issue_no}
+		     </if>
+			group by issue_tag
+			
+			
+	</select>
+	
+	<update id="updateIssueTag" parameterType="map">
+         DELETE FROM issue_tag   
+         WHERE issue_no = #{issue_no} 
+	</update> 
+
+	<!-- Issue - Reply///////////////////////// -->
+	<select id="selectReply" parameterType="map" resultType="ReplyVO">
+			SELECT *
+			FROM reply
+			where issue_no = #{issue_no}
+			ORDER BY IF(ISNULL(parent), reply_no, parent), reply_dt
+	</select>
+	
+	<insert id="insertReply" parameterType="map">
+	
+	INSERT INTO `test01`.`reply`(
+			`reply_reg_id`
+			,`reply_content`
+			,`reply_dt`
+			,`issue_no`
+			,`reply_depth`
+			<if test='parent != null and parent != ""'>
+			,`parent`
+			</if>
+			<if test='reply_depth == "3"'>
+			,`parent_tag_id`
+			</if>
+			)
+			
+			VALUES(
+			#{reply_reg_id}
+			,#{reply_content}
+			,now()
+			,#{issue_no}
+			,#{reply_depth}
+			<if test='parent != null and parent != ""'>
+			,#{parent} 
+			</if>
+			<if test='reply_depth == "3"'>
+			,${parent_tag_id}
+			</if>
+			);
+	</insert>
+	
+	<update id="updateReply" parameterType="map">
+	
+      <if test='ud_flag == "U"'>
+         UPDATE `test01`.`reply`
+         SET 
+        
+        `reply_content` = #{reply_content_modi}
+         WHERE reply_no = #{reply_no}
+         	
+      </if>
+      
+      <if test='ud_flag == "D"'>      
+        UPDATE `test01`.`reply`
+         SET 
+        
+        `del` = '1'
+         WHERE reply_no = #{reply_no}
+      
+         <!-- DELETE FROM reply   
+         WHERE reply_no = #{reply_no} -->         
+      </if>
+	</update>
+
+
+	<!-- User///////////////////////// -->
+	<select id="selectUser" parameterType="map" resultType="UserVO">
+		select * from test01.office where office_id = #{office_id}
+	</select>
+	
+	<select id="selectListUser" parameterType="map" resultType="UserVO">
+		select * from test01.office 
+		<if test='seller_id != null and seller_id != ""'>
+			  	where office_id = #{seller_id}
+			</if>
+	
+	</select>
+    
+		<insert id="insertUser" parameterType="map">
+		INSERT INTO `test01`.`office`
+			(
+			`office_id`,
+			`pw`,
+			`manager`,
+			`phone`,
+			`email`,
+			`user_group`
+			)
+			
+			VALUES
+			(
+			#{office_id},
+			#{pw},
+			#{user_nm},
+			#{phone},
+			#{email},
+			#{user_group}
+			);
+	</insert>
+	
+	
+		<update id="updateUser" parameterType="map">
+	
+      <if test='ud_flag == "U"'>
+         UPDATE office
+         SET 
+        
+         phone = #{phone}
+         ,email = #{email}
+         
+           <if test='m_pw != null and m_pw != ""'>
+		     ,pw = #{m_pw}
+		    </if>
+  		 
+         WHERE office_id = #{office_id}
+         	
+      </if>
+      
+      <if test='ud_flag == "D"'>      
+         DELETE FROM office   
+         WHERE office_id = #{office_id}         
+      </if>
+	</update>
+	
+	<!-- Stock///////////////////////// -->
+	
+	<insert id="updateStock" parameterType="map">
+		INSERT INTO test01.stock(
+		  location_id,
+		  goods_no,
+		  goods_qty
+		) VALUES (
+		 #{office_id},
+		 #{goods_no},
+		 #{goods_qty}
+		)
+		 ON DUPLICATE KEY UPDATE
+		  <if test='goods_qty != null and goods_qty != ""'>
+		 	goods_qty = goods_qty+#{goods_qty}	 	
+		 </if>
+	</insert>
+	
+	<!-- Management///////////////////////// -->
+	
+	<select id="selectManagement"  parameterType="map" resultType="ManagementVO">
+	select A.office_id, A.manager as reseller_nm, B.schedule_no, B.schedule_dt, C.goods_no, C.goods_qty, C.goods_price,  D.goods_nm, D.unit_price, E.customer_id, E.customer_nm
+			from test01.office A  
+            
+			join test01.schedule B 
+			on A.office_id = B.reseller_id
+			
+            join test01.schedule_goods C
+			on B.schedule_no = C.schedule_no
+			
+            join test01.goods D
+			on C.goods_no = D.goods_no   
+			
+			join test01.customer E
+			on B.customer_id = E.customer_id     
+
+		WHERE A.office_id is not NULL  
+		
+	     <if test='user_id != null and user_id != ""'>
+	    	AND A.office_id = #{user_id}
+	     </if>
+	      <if test='seller_id != null and seller_id != ""'>
+	    	AND A.office_id = #{seller_id}
+	     </if> 
+	     <if test='customer_id != null and customer_id != ""'>
+	    	AND E.customer_id = #{customer_id}
+	     </if> 
+	     <if test='goods_nm != null and goods_nm != ""'>
+			      AND D.goods_nm  LIKE CONCAT('%', #{goods_nm}, '%') 
+			</if>
+	     
+    		<if test='fr_wb_dt != null and fr_wb_dt != ""'>
+    		     and (DATE(B.schedule_dt) BETWEEN #{fr_wb_dt} and #{to_wb_dt})
+      		</if>
+		    <if test='pageNo != null and pageNo != ""'>
+		         LIMIT #{pageView}
+		         OFFSET #{offSet}
+		    </if>
+    </select>
+    
+    <select id="r_PagingCountMng" parameterType="map" resultType="int">
+		select count(*) from test01.office 
+		<if test='seller_id != null and seller_id != ""'>
+			  	where office_id = #{seller_id}
+			</if>
+	
+	</select>
+	
+    <select id="selectMngReseller" parameterType="map" resultType="UserVO">
+		select * from test01.office 
+		<if test='seller_id != null and seller_id != ""'>
+			  	where office_id = #{seller_id}
+			</if>
+			
+	
+	</select>
+	
+    <select id="c_PagingCountMng" parameterType="map" resultType="int">
+		 SELECT count(*) FROM test01.customer 
+     	WHERE customer_id is not NULL
+		<if test='customer_id != null and customer_id != ""'>
+			  	and customer_id = #{customer_id}
+			</if>
+			<if test='seller_id != null and seller_id != ""'>
+			  	and manager_id = #{seller_id}
+			</if>
+	
+	</select>
+	
+    <select id="selectMngCustomer" parameterType="map" resultType="CustomVO">
+		 SELECT *, 
+     		(select manager from test01.office where office_id = D.manager_id) manager_nm
+     	
+     	FROM test01.customer D
+     	
+     	WHERE D.customer_id is not NULL
+		<if test='customer_id != null and customer_id != ""'>
+			  	and customer_id = #{customer_id}
+			</if>
+			<if test='seller_id != null and seller_id != ""'>
+			  	and D.manager_id = #{seller_id}
+			</if>
+			
+	
+	</select>
+	
+    <select id="g_PagingCountMng" parameterType="map" resultType="int">
+		select count(*) from test01.goods
+		<if test='goods_nm != null and goods_nm != ""'>
+			  	where goods_nm LIKE CONCAT('%', #{goods_nm}, '%') 
+			</if>
+	</select>
+	
+    <select id="selectMngGoods" parameterType="map" resultType="GoodsVO">
+		select * from test01.goods
+		<if test='goods_nm != null and goods_nm != ""'>
+			  	where goods_nm LIKE CONCAT('%', #{goods_nm}, '%') 
+			</if>
+			
+	</select>
+    
+    
+    
+    
+</mapper>
+

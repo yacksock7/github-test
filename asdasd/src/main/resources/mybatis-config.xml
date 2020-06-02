@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration 
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+    <configuration>
+<!--  
+    <properties>
+        <property name="tblBoard" value="test_board" />
+        <property name="colBno" value="bno" />
+        <property name="colTitle" value="title" />
+        <property name="colContent" value="content" />
+        <property name="colUserid" value="userid" />
+        <property name="colRegdate" value="regdate" />
+        
+        <property name="tblMember" value="tbl_member"/>
+        <property name="colUserid" value="userid"/>
+        <property name="colPassword" value="password"/>
+        <property name="colEmail" value="email"/>
+    </properties>
+  -->
+ 
+ 
+ 
+        <typeAliases>
+            <typeAlias type="com.example.dto.CustomVO" alias="CustomVO"/>
+            <typeAlias type="com.example.dto.ResellerVO" alias="ResellerVO"/>
+            <typeAlias type="com.example.dto.DealVO" alias="DealVO"/>
+            <typeAlias type="com.example.dto.GoodsVO" alias="GoodsVO"/>
+            <typeAlias type="com.example.dto.UserVO" alias="UserVO"/>
+            <typeAlias type="com.example.dto.NoticeVO" alias="NoticeVO"/>
+            <typeAlias type="com.example.dto.ScheduleVO" alias="ScheduleVO"/>
+
+             <typeAlias type="com.example.dto.SGVO" alias="SGVO"/>
+             <typeAlias type="com.example.dto.ManagementVO" alias="ManagementVO"/>
+             
+             <typeAlias type="com.example.dto.IssueVO" alias="IssueVO"/>
+             <typeAlias type="com.example.dto.IssueTagVO" alias="IssueTagVO"/>
+             <typeAlias type="com.example.dto.ITVO" alias="ITVO"/>
+             <typeAlias type="com.example.dto.ReplyVO" alias="ReplyVO"/>
+        </typeAliases>
+
+
+    </configuration>
+

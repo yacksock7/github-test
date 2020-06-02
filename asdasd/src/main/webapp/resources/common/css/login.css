@@ -1,0 +1,27 @@
+/******** 분류 */
+
+/* layout */
+#wrap_login {position:relative; width:100%; margin:0 auto; height:auto !important; height:100%; min-height:100%; background:url(../../images/login/top_bg.gif) repeat-x left top;}
+	#header_login {height:111px;}
+	#header_login h1 {text-align:center; padding-top:6px;}
+
+#container_login {width:456px; margin:0 auto; min-height:610px; padding-top:155px;}
+	#container_login .txt_admin {padding:0 0 13px 22px;}
+	#container_login .txt_admin h2 {float:left;}
+	#container_login .txt_admin p {float:left; padding:0 15px;}
+	#container_login .txt_admin:after {content:""; display:block; clear:both;}
+	
+/* 로그인 박스 */
+.olleh_login_box {position:relative; width:360px; height:218px; padding:0 55px 0 40px; border:1px solid #cacaca; background-color:#fafafa;}
+	.olleh_login_box .login_txt {margin:42px 0 0 52px;}
+	.olleh_login_box .login_bdy {position:relative; margin:45px 0 0 0;}
+	.olleh_login_box dl {float:left;}
+	.olleh_login_box dt {clear:both; float:left; width:64px; line-height:24px; text-align:right; font-weight:bold; color:#393840;}
+	.olleh_login_box dd {float:left; width:175px; margin:0 10px 6px;}
+
+	.olleh_login_box .login_btn {float:left;}
+	.olleh_login_box .login_chk {clear:both; text-align:right; padding:10px 20px 0 0;}
+	.olleh_login_box .login_chk label {vertical-align:middle;}
+	.olleh_login_box .login_chk input {vertical-align:middle;}
+
+#footer_login {position:absolute; width:100%; bottom:0; height:111px; background:url(../../images/login/top_bg.gif) repeat-x left top;}
